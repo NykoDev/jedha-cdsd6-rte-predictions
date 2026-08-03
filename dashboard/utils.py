@@ -4,8 +4,20 @@ import boto3
 from io import BytesIO
 import os
 import datetime
+import streamlit as st
 
 load_dotenv()
+
+# Sur Streamlit Community Cloud, les secrets saisis dans l'UI de l'app sont exposés via
+# st.secrets mais ne sont pas injectés dans os.environ. On les recopie ici une fois, à l'import
+# du module, pour que os.environ.get(...) (utilisé partout dans ce fichier) fonctionne à
+# l'identique en local (.env) et sur Cloud (secrets.toml). Pas d'effet en local : st.secrets est
+# alors vide (pas de fichier .streamlit/secrets.toml).
+try:
+    for _key, _value in st.secrets.items():
+        os.environ.setdefault(_key, str(_value))
+except Exception:
+    pass
 
 
 # Date considérée comme "aujourd'hui" par le dashboard : CURRENT_DAY (variable d'env, format

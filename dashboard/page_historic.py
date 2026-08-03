@@ -4,21 +4,21 @@ import numpy as np
 import plotly.express as px
 import datetime
 from dotenv import load_dotenv
-import os
+import utils
 
 
 load_dotenv()
 
 st.set_page_config(layout="wide")
 
-# Dataset d'entraînement local (même fichier que training/*.ipynb) : pas de dépendance à S3 pour
-# cette page, l'historique complet ne change pas d'une exécution à l'autre en local.
-DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "training_dataset_2022_2025.csv")
+# Chargé depuis S3 (et non plus un CSV local) : data/ est gitignoré, donc absent du dépôt cloné
+# par Streamlit Community Cloud au déploiement.
+DATA_KEY = "data/historic_dataset_2022_2025.csv"
 
 
 @st.cache_data
 def load_historical_dataset():
-    return pd.read_csv(DATA_PATH, parse_dates=["datetime_utc"])
+    return utils.load_dataset_s3(DATA_KEY)
 
 
 df = load_historical_dataset()

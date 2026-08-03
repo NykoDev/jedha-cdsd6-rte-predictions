@@ -6,6 +6,7 @@ import requests
 from dotenv import load_dotenv
 from time import sleep
 import os
+import utils  # noqa: F401  (import déclenche le pont st.secrets -> os.environ, cf. utils.py)
 
 load_dotenv()
 

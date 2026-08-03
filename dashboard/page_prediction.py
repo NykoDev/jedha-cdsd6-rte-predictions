@@ -5,22 +5,22 @@ import plotly.express as px
 from datetime import timedelta
 from dotenv import load_dotenv
 import utils
-import os
 
 
 load_dotenv()
 
 st.set_page_config(layout="wide")
 
-# Historique local (référence pour les métriques "consommation réelle") + prédictions depuis S3
-# (produites par l'API /predict, cf. api/main.py)
-DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "training_dataset_2022_2025.csv")
+# Historique (référence pour les métriques "consommation réelle") + prédictions : les deux
+# viennent de S3 (data/ est gitignoré, donc absent du dépôt cloné par Streamlit Community Cloud
+# au déploiement). Les prédictions sont produites par l'API /predict, cf. api/main.py.
+DATA_S3_KEY = "data/historic_dataset_2022_2025.csv"
 PREDICTIONS_S3_KEY = "data/previsions.csv"
 
 
 @st.cache_data(ttl=3600)
 def load_recent_dataset():
-    return pd.read_csv(DATA_PATH, parse_dates=["datetime_utc"])
+    return utils.load_dataset_s3(DATA_S3_KEY)
 
 @st.cache_data(ttl=3600)
 def load_prediction_dataset():
