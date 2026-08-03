@@ -9,3 +9,5 @@ Déployé sur [Streamlit Community Cloud](https://streamlit.io/cloud) (app princ
 `dashboard/app.py`, dépendances : `dashboard/requirements.txt`). Nécessite les variables d'env
 `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_BUCKET` (accès S3) et `API_URL` (URL de l'API
 FastAPI déployée), à renseigner via le gestionnaire de secrets de la plateforme.
+
+URL : https://jedha-cdsd6-rte-predictions-esmnwbfkwwknwuud7eo9uh.streamlit.app/
