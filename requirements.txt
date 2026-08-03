@@ -1,0 +1,17 @@
+requests
+pandas
+python-dotenv
+sqlalchemy
+psycopg2-binary
+pytz
+jupyter
+ipykernel
+scikit-learn
+xgboost
+mlflow
+matplotlib
+holidays
+prophet
+boto3
+fastapi
+uvicorn

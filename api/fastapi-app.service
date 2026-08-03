@@ -1,0 +1,20 @@
+[Unit]
+Description=FastAPI Consumption Prediction API
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+RestartSec=10
+ExecStartPre=-/usr/bin/docker stop fastapi-app
+ExecStartPre=-/usr/bin/docker rm fastapi-app
+ExecStart=/usr/bin/docker run \
+    --name fastapi-app \
+    --env-file /home/ubuntu/.env \
+    -p 8000:8000 \
+    fastapi-app:latest
+
+ExecStop=/usr/bin/docker stop fastapi-app
+
+[Install]
+WantedBy=multi-user.target
