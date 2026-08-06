@@ -21,7 +21,13 @@ def load_historical_dataset():
     return utils.load_dataset_s3(DATA_KEY)
 
 
-df = load_historical_dataset()
+# Fichier absent de S3 (pas encore généré) : on arrête le rendu de la page ici plutôt que de
+# planter sur les traitements pandas qui suivent (colonnes attendues sur un df vide/inexistant).
+try:
+    df = load_historical_dataset()
+except FileNotFoundError:
+    st.warning("Pas d'historique disponible")
+    st.stop()
 
 df["datetime_utc"] = pd.to_datetime(df["datetime_utc"], utc=True)
 df["datetime_fr"] = df["datetime_utc"].dt.tz_convert("Europe/Paris")

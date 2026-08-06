@@ -48,6 +48,15 @@ def load_dataset_s3(file):
         region_name="eu-west-3",
     )
 
-    response = s3_client.get_object(Bucket=os.environ.get('AWS_BUCKET'), Key=file)
+    # NoSuchKey (fichier absent du bucket, ex. prévision/historique pas encore généré) est
+    # remonté en FileNotFoundError, plus explicite pour l'appelant que l'exception boto3 brute :
+    # les pages du dashboard s'en servent pour afficher un message plutôt qu'un stack trace.
+    # Les autres erreurs (credentials invalides, bucket inexistant...) ne sont pas ce cas précis
+    # et remontent telles quelles.
+    try:
+        response = s3_client.get_object(Bucket=os.environ.get('AWS_BUCKET'), Key=file)
+    except s3_client.exceptions.NoSuchKey:
+        raise FileNotFoundError(f"Fichier introuvable sur S3 : {file}")
+
     df = pd.read_csv(BytesIO(response["Body"].read()))
     return df

@@ -27,11 +27,22 @@ def load_prediction_dataset():
     return utils.load_dataset_s3(PREDICTIONS_S3_KEY)
 
 
-df = load_recent_dataset()
+# Fichiers absents de S3 (historique pas encore chargé / prédiction pas encore lancée) : on
+# arrête le rendu de la page ici, avec un message distinct par fichier, plutôt que de planter sur
+# les traitements pandas qui suivent (colonnes attendues sur un df vide/inexistant).
+try:
+    df = load_recent_dataset()
+except FileNotFoundError:
+    st.warning("Pas d'historique disponible")
+    st.stop()
 df["datetime_utc"] = pd.to_datetime(df["datetime_utc"], utc=True)
 df["datetime_fr"] = df["datetime_utc"].dt.tz_convert("Europe/Paris")
 
-df_pred = load_prediction_dataset()
+try:
+    df_pred = load_prediction_dataset()
+except FileNotFoundError:
+    st.warning("Pas de prévision disponible")
+    st.stop()
 df_pred["target_datetime_utc"] = pd.to_datetime(df_pred["target_datetime_utc"], utc=True)
 df_pred["target_datetime_fr"] = df_pred["target_datetime_utc"].dt.tz_convert("Europe/Paris")
 
